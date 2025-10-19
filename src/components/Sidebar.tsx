@@ -2,16 +2,17 @@
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import Link from "next/link";
-import { 
-  MessageSquarePlus, 
-  MessageSquare, 
-  Loader2, 
-  Users, 
+import {
+  MessageSquarePlus,
+  MessageSquare,
+  Loader2,
+  Users,
   Search,
   Clock,
   Shield,
   User,
-  MoreVertical
+  MoreVertical,
+  Settings
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import NewChatModal from "./NewChatModal";
@@ -59,14 +60,13 @@ export default function Sidebar() {
 
     const query = searchQuery.toLowerCase();
     const filtered = chats.filter(chat => {
-      const title = chat.title?.toLowerCase() || '';
+      const title = chat.title?.toLowerCase() || "";
       const participants = chat.participants
         .map(p => p.user.name?.toLowerCase() || p.user.email.toLowerCase())
-        .join(' ');
-      
+        .join(" ");
       return title.includes(query) || participants.includes(query);
     });
-    
+
     setFilteredChats(filtered);
   }, [searchQuery, chats]);
 
@@ -84,7 +84,7 @@ export default function Sidebar() {
     const date = new Date(dateString);
     const now = new Date();
     const diffInHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60);
-    
+
     if (diffInHours < 24) {
       return date.toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit" });
     } else if (diffInHours < 168) {
@@ -96,19 +96,15 @@ export default function Sidebar() {
 
   const getChatSubtitle = (chat: Chat) => {
     if (chat.title) return chat.title;
-    
-    const participants = chat.participants.map(p => 
-      p.user.name || p.user.email.split('@')[0]
-    );
-    
+    const participants = chat.participants.map(p => p.user.name || p.user.email.split("@")[0]);
     return participants.join(", ");
   };
 
   const getInitials = (name: string) => {
     return name
-      .split(' ')
+      .split(" ")
       .map(part => part.charAt(0))
-      .join('')
+      .join("")
       .toUpperCase()
       .slice(0, 2);
   };
@@ -124,7 +120,7 @@ export default function Sidebar() {
                 Mensagens
               </h1>
               <p className="text-sm text-gray-500 mt-1">
-                {chats.length} {chats.length === 1 ? 'conversa' : 'conversas'}
+                {chats.length} {chats.length === 1 ? "conversa" : "conversas"}
               </p>
             </div>
             <button
@@ -143,7 +139,7 @@ export default function Sidebar() {
               type="text"
               placeholder="Pesquisar conversas..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={e => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm"
             />
           </div>
@@ -162,23 +158,19 @@ export default function Sidebar() {
                 <>
                   <Search className="w-8 h-8 mb-2" />
                   <p className="text-sm font-medium text-gray-600">Nenhuma conversa encontrada</p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    Tente ajustar os termos da pesquisa
-                  </p>
+                  <p className="text-xs text-gray-500 mt-1">Tente ajustar os termos da pesquisa</p>
                 </>
               ) : (
                 <>
                   <MessageSquare className="w-8 h-8 mb-2" />
                   <p className="text-sm font-medium text-gray-600">Sem conversas</p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    Inicia uma nova conversa para começar
-                  </p>
+                  <p className="text-xs text-gray-500 mt-1">Inicia uma nova conversa para começar</p>
                 </>
               )}
             </div>
           ) : (
             <div className="space-y-1">
-              {filteredChats.map((chat) => {
+              {filteredChats.map(chat => {
                 const subtitle = getChatSubtitle(chat);
                 const isActive = pathname === `/chat/${chat.id}`;
                 const lastMessageTime = chat.lastMessageAt ? formatTime(chat.lastMessageAt) : null;
@@ -195,12 +187,13 @@ export default function Sidebar() {
                     }`}
                   >
                     <div className="flex items-start gap-3">
-                      {/* Avatar do chat */}
-                      <div className={`flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center ${
-                        chat.isGroup 
-                          ? 'bg-gradient-to-r from-purple-500 to-pink-500' 
-                          : 'bg-gradient-to-r from-blue-500 to-cyan-500'
-                      }`}>
+                      <div
+                        className={`flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center ${
+                          chat.isGroup
+                            ? "bg-gradient-to-r from-purple-500 to-pink-500"
+                            : "bg-gradient-to-r from-blue-500 to-cyan-500"
+                        }`}
+                      >
                         {chat.isGroup ? (
                           <Users className="w-5 h-5 text-white" />
                         ) : (
@@ -208,28 +201,26 @@ export default function Sidebar() {
                         )}
                       </div>
 
-                      {/* Conteúdo */}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-2">
                           <div className="flex-1 min-w-0">
-                            <p className={`font-medium truncate ${
-                              isActive ? "text-blue-700" : "text-gray-800"
-                            }`}>
+                            <p
+                              className={`font-medium truncate ${
+                                isActive ? "text-blue-700" : "text-gray-800"
+                              }`}
+                            >
                               {subtitle}
                             </p>
                             <div className="flex items-center gap-2 mt-1">
                               {messageCount > 0 && (
                                 <span className="bg-blue-100 text-blue-600 text-xs px-1.5 py-0.5 rounded-full">
-                                  {messageCount} {messageCount === 1 ? 'msg' : 'msgs'}
+                                  {messageCount} {messageCount === 1 ? "msg" : "msgs"}
                                 </span>
                               )}
-                              {chat.isGroup && (
-                                <Shield className="w-3 h-3 text-green-500" />
-                              )}
+                              {chat.isGroup && <Shield className="w-3 h-3 text-green-500" />}
                             </div>
                           </div>
-                          
-                          {/* Timestamp e menu */}
+
                           <div className="flex flex-col items-end gap-1">
                             {lastMessageTime && (
                               <span className="text-xs text-gray-500 whitespace-nowrap flex items-center gap-1">
@@ -251,23 +242,31 @@ export default function Sidebar() {
           )}
         </div>
 
-        {/* Footer com informações do usuário */}
-        <div className="p-4 border-t border-gray-200/60 bg-white/50">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-gradient-to-r from-gray-600 to-gray-400 rounded-full flex items-center justify-center">
-              <span className="text-white text-xs font-medium">
-                {getInitials("Utilizador")}
-              </span>
+        {/* Footer com Configurações */}
+        <div className="p-4 border-t border-gray-200/60 bg-white/60 backdrop-blur-sm">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-gradient-to-r from-gray-600 to-gray-400 rounded-full flex items-center justify-center">
+                <span className="text-white text-xs font-medium">{getInitials("Utilizador")}</span>
+              </div>
+              <div className="flex flex-col">
+                <p className="text-sm font-medium text-gray-800 truncate">Utilizador</p>
+                <p className="text-xs text-green-600">Online</p>
+              </div>
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-800 truncate">Utilizador</p>
-              <p className="text-xs text-gray-500 truncate">Online</p>
-            </div>
+
+            <Link
+              href="/settings"
+              title="Configurações"
+              className="p-2 rounded-lg text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200"
+            >
+              <Settings className="w-5 h-5" />
+            </Link>
           </div>
         </div>
       </aside>
 
-      {/* Modal "Nova conversa" */}
+      {/* Modal Nova conversa */}
       <NewChatModal
         open={openNewChat}
         onClose={() => setOpenNewChat(false)}
