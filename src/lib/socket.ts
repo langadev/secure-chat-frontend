@@ -6,7 +6,7 @@ let socket: Socket | null = null;
 export function getSocket() {
   const token = useAuthStore.getState().accessToken;
   if (!socket) {
-    socket = io(process.env.NEXT_PUBLIC_API_WS || "http://localhost:3001", {
+    socket = io(process.env.NEXT_PUBLIC_API_WS || "http://localhost:8080", {
       path: "/ws",
       auth: { token },
       transports: ["websocket"],
